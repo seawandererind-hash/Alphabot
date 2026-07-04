@@ -1,10 +1,10 @@
-"""master_brain.py — collect agent votes, weighted consensus, final decision."""
+﻿"""master_brain.py — collect agent votes, weighted consensus, final decision."""
 from agents import (market_structure, session_timer, amd_detector, momentum_ml,
                     trend_following, correlation, stat_arbitrage, standby, risk_manager)
 
 CORE = [market_structure.analyze, session_timer.analyze, amd_detector.analyze,
         momentum_ml.analyze, trend_following.analyze, standby.news, standby.sentiment]
-POWER = [nlp for nlp in [standby.nlp_tone, correlation.analyze, stat_arbitrage.analyze]]
+POWER = [standby.nlp_tone, correlation.analyze, stat_arbitrage.analyze]
 
 
 def collect_votes(df, ctx):
@@ -23,16 +23,25 @@ def decide(df, ctx, account):
 
     buy = sum(v.meta["weight"] for v in votes if v.signal == "BUY")
     sell = sum(v.meta["weight"] for v in votes if v.signal == "SELL")
-    direction = "BUY" if buy >= sell else "SELL"
-    aligned = buy if direction == "BUY" else sell
-    directional = buy + sell            # HOLD agents abstain (don't block)
-    consensus = (aligned / directional) if directional else 0.0
-    avg_conf = int(sum(v.confidence for v in votes) / len(votes))
+    directional = buy + sell
 
-    # need enough conviction AND enough agreement among those who voted
-    MIN_CONVICTION = 4.0                 # weighted directional votes required
+    if buy == sell:
+        direction = "HOLD"
+        aligned = 0.0
+    else:
+        direction = "BUY" if buy > sell else "SELL"
+        aligned = buy if direction == "BUY" else sell
+    consensus = (aligned / directional) if directional else 0.0
+
+    directional_votes = [v for v in votes if v.signal in ("BUY", "SELL")]
+    avg_conf = (int(sum(v.confidence for v in directional_votes) / len(directional_votes))
+                if directional_votes else 0)
+
+    MIN_CONVICTION = 4.0
     if risk.signal == "BLOCK":
         decision = "BLOCK"
+    elif direction == "HOLD":
+        decision = "HOLD"
     elif directional >= MIN_CONVICTION and consensus >= 0.70:
         decision = direction
     elif directional >= MIN_CONVICTION and consensus >= 0.60:
