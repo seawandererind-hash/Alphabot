@@ -8,6 +8,8 @@ the agents "learn" — the optimizer just rewrites config.json.
 import os
 import json
 
+import numpy as np
+
 from agents import (market_structure, session_timer, amd_detector, momentum_ml,
                     trend_following, correlation, stat_arbitrage, standby,
                     risk_manager, learned_ml, strategy_pack)
@@ -35,10 +37,15 @@ _POWER = {"NLP Tone", "Correlation", "Stat Arbitrage", "Learned ML"}
 
 DEFAULT_PARAMS = {
     "weights": {},          # per-agent override, e.g. {"Trend Following": 2.0}
+    "weights_r": None,      # regime router: weights for RANGING markets
+    "regime_n": 48,         # efficiency-ratio lookback (candles)
+    "regime_thr": 0.30,     # ER >= thr -> trending -> use `weights`
     "min_conviction": 4.0,  # weighted directional votes required to trade
     "thr_full": 0.70,       # consensus for a full position
     "thr_half": 0.60,       # consensus for a half position
     "sl": 15, "tp": 30,     # pips — used by the backtester
+    "be_trigger": 0,        # smart exit: move stop to breakeven after +N pips
+    "trail": 0,             # smart exit: trail stop N pips behind best price
 }
 
 _ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -82,9 +89,25 @@ def collect_votes(df, ctx, params=None):
     return votes
 
 
+def _is_trending(df, n=48, thr=0.30):
+    """Kaufman efficiency ratio on the last n candles (same as the backtester)."""
+    c = df["close"].values
+    if len(c) < n + 1:
+        return False
+    net = abs(float(c[-1]) - float(c[-1 - n]))
+    noise = float(np.abs(np.diff(c[-1 - n:])).sum())
+    return (net / noise if noise > 0 else 0.0) >= thr
+
+
 def decide(df, ctx, account, params=None):
     if params is None:
         params = load_config()
+    # regime router: ranging markets vote with weights_r instead
+    if params.get("weights_r"):
+        trending = _is_trending(df, int(params.get("regime_n", 48)),
+                                float(params.get("regime_thr", 0.30)))
+        if not trending:
+            params = {**params, "weights": params["weights_r"]}
     votes = collect_votes(df, ctx, params)
     risk = risk_manager.evaluate(account, ctx)
 
