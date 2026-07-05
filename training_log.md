@@ -94,3 +94,4 @@
 - 08:04:00 HOLDOUT 15m best65: -32.0p (18 trades, 55.6% win)
 - 08:04:00 15m: no champion beat current config on holdout — config kept
 - 08:04:00 === TRAINING SESSION COMPLETE — models/train_summary.json written ===
+- 01:49:49 precomputed 1h: 17005 candles in 483s

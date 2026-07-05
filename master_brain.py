@@ -10,14 +10,15 @@ import json
 
 import numpy as np
 
-from agents import (market_structure, session_timer, amd_detector, momentum_ml,
+from agents import (market_structure, amd_detector, momentum_ml,
                     trend_following, correlation, stat_arbitrage, standby,
-                    risk_manager, learned_ml, strategy_pack)
+                    risk_manager, learned_ml, strategy_pack,
+                    liquidity_windows, cot_agent)
 
 # name -> analyze fn.  Order is stable so precompute/backtest stay reproducible.
 AGENTS = [
     ("Market Structure", market_structure.analyze),
-    ("Session Timer",    session_timer.analyze),
+    ("Liquidity Windows", liquidity_windows.analyze),  # replaced Session Timer
     ("AMD Detector",     amd_detector.analyze),
     ("ML/Momentum",      momentum_ml.analyze),
     ("Trend Following",  trend_following.analyze),
@@ -29,6 +30,7 @@ AGENTS = [
     ("RSI-2 Reversion",  strategy_pack.rsi2_reversion),   # Larry Connors classic
     ("London Breakout",  strategy_pack.london_breakout),  # Asian-range break
     ("Bollinger Fade",   strategy_pack.bollinger_fade),   # sigma-stretch fade
+    ("COT Institutional", cot_agent.analyze),      # CFTC big-money positioning
     ("Learned ML",       learned_ml.analyze),      # HOLD unless a model is trained
 ]
 
