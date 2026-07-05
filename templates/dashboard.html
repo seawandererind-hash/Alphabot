@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlphaBot — Live Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#141a24; --panel2:#1b2330; --line:#232c3b;
+    --txt:#e6edf3; --muted:#8b98a9; --buy:#26d07c; --sell:#ff5c6c;
+    --hold:#f0b429; --block:#ff3b3b; --accent:#4f8cff; --purple:#9b6bff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:22px 26px 60px}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto}
+
+  header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .logo{width:38px;height:38px;border-radius:10px;
+    background:linear-gradient(135deg,#4f8cff,#26d07c);
+    display:grid;place-items:center;font-weight:800;font-size:20px;color:#06121f}
+  h1{font-size:20px;font-weight:700;letter-spacing:.3px}
+  h1 span{color:var(--muted);font-weight:500;font-size:13px;display:block}
+  .spacer{flex:1}
+
+  select,button,input{font-family:inherit;font-size:14px;border-radius:10px;
+    border:1px solid var(--line);background:var(--panel2);color:var(--txt);
+    padding:9px 13px;transition:.15s}
+  select,button{cursor:pointer}
+  select:hover,button:hover,input:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#06121f;font-weight:600}
+  button.grape{background:var(--purple);border-color:var(--purple);color:#0a0614;font-weight:700}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#3a4658}
+  .dot.on{background:var(--buy);box-shadow:0 0 8px var(--buy)}
+  .learned-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;
+    background:rgba(155,107,255,.16);color:var(--purple)}
+
+  .tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .tab{padding:10px 18px;font-size:14px;font-weight:600;color:var(--muted);
+    cursor:pointer;border-bottom:2px solid transparent;transition:.15s}
+  .tab:hover{color:var(--txt)}
+  .tab.active{color:var(--txt);border-bottom-color:var(--accent)}
+  .page{display:none} .page.active{display:block}
+
+  .grid-top{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;margin-bottom:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+
+  .decision{font-size:44px;font-weight:800;letter-spacing:.5px;line-height:1}
+  .decision.buy{color:var(--buy)} .decision.sell{color:var(--sell)}
+  .decision.hold{color:var(--hold)} .decision.block{color:var(--block)}
+  .decision.half_buy{color:var(--buy)} .decision.half_sell{color:var(--sell)}
+  .subline{margin-top:12px;color:var(--muted);font-size:13px}
+  .subline b{color:var(--txt)}
+  .price{font-size:34px;font-weight:700}
+  .spark{margin-top:12px;width:100%;height:52px;display:block}
+
+  .gauge-wrap{display:flex;align-items:center;gap:18px}
+  .gauge{position:relative;width:96px;height:96px;flex:none}
+  .gauge .val{position:absolute;inset:0;display:grid;place-items:center;font-size:22px;font-weight:700}
+  .meta-list{font-size:13px;color:var(--muted);line-height:1.9}
+  .meta-list b{color:var(--txt)}
+
+  .risk{display:flex;align-items:center;gap:12px;padding:13px 18px;border-radius:12px;
+    margin-bottom:16px;font-size:14px;border:1px solid var(--line);background:var(--panel)}
+  .risk .badge{font-weight:700;padding:3px 11px;border-radius:20px;font-size:12px}
+  .risk.ok .badge{background:rgba(38,208,124,.15);color:var(--buy)}
+  .risk.block .badge{background:rgba(255,59,59,.15);color:var(--block)}
+
+  .agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:13px}
+  .agent{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}
+  .agent .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+  .agent .name{font-weight:600;font-size:14px}
+  .sig{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+  .sig.buy{background:rgba(38,208,124,.15);color:var(--buy)}
+  .sig.sell{background:rgba(255,92,108,.15);color:var(--sell)}
+  .sig.hold{background:rgba(240,180,41,.13);color:var(--hold)}
+  .agent .reason{font-size:12px;color:var(--muted);min-height:32px;line-height:1.45}
+  .bar{height:6px;border-radius:6px;background:var(--panel2);margin-top:11px;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:6px;transition:width .4s}
+  .agent .foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:7px}
+  .wtag{background:var(--panel2);padding:1px 7px;border-radius:6px;font-weight:600}
+
+  .controls{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .fld{display:flex;flex-direction:column;gap:5px}
+  .fld small{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{border:0;border-radius:0;background:var(--panel2);padding:9px 14px;font-size:13px}
+  .seg button.on{background:var(--accent);color:#06121f;font-weight:700}
+
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+  .stat .v{font-size:30px;font-weight:800;margin-top:4px}
+  .stat .v.pos{color:var(--buy)} .stat .v.neg{color:var(--sell)}
+  .eq-card{margin-bottom:16px}
+  #equity{width:100%;height:220px;display:block}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  td.buy{color:var(--buy)} td.sell{color:var(--sell)}
+  td.pos{color:var(--buy)} td.neg{color:var(--sell)}
+  .center{text-align:center;color:var(--muted);padding:40px}
+
+  /* learn */
+  .prog-wrap{height:12px;background:var(--panel2);border-radius:8px;overflow:hidden;margin:14px 0 8px}
+  .prog{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--accent));transition:width .3s}
+  .cmp{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0}
+  .cmp .box{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .cmp .box h4{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600}
+  .cmp .box .big{font-size:24px;font-weight:800}
+  .cmp .box.win{border-color:var(--buy)}
+  .kv{font-size:13px;color:var(--muted);line-height:1.8}
+  .kv b{color:var(--txt)}
+  .wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px}
+  .wpill{display:flex;justify-content:space-between;background:var(--panel2);border:1px solid var(--line);
+    border-radius:8px;padding:7px 11px;font-size:13px}
+  .wpill b{color:var(--purple)}
+
+  /* news */
+  .news-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .tone-pill{padding:6px 14px;border-radius:20px;font-weight:700;font-size:13px}
+  .tone-pill.bull{background:rgba(38,208,124,.15);color:var(--buy)}
+  .tone-pill.bear{background:rgba(255,92,108,.15);color:var(--sell)}
+  .tone-pill.neutral{background:rgba(240,180,41,.13);color:var(--hold)}
+  .news-item{display:flex;gap:14px;align-items:flex-start;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;transition:.15s}
+  .news-item:hover{border-color:var(--accent)}
+  .news-item .tk{width:5px;align-self:stretch;border-radius:5px;flex:none}
+  .news-item .tk.bull{background:var(--buy)} .news-item .tk.bear{background:var(--sell)}
+  .news-item .tk.neutral{background:var(--hold)}
+  .news-item .tt{font-size:14px;line-height:1.4}
+  .news-item .mt{font-size:11px;color:var(--muted);margin-top:5px}
+
+  .foot-note{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}
+  .err{background:rgba(255,59,59,.12);border:1px solid var(--block);color:#ffb3b3;
+    padding:12px 16px;border-radius:12px;margin-bottom:16px;font-size:13px}
+  .loading{opacity:.45;transition:opacity .2s}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--muted);
+    border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media(max-width:820px){.grid-top,.cmp{grid-template-columns:1fr}.stat-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo">α</div>
+      <h1>AlphaBot <span>Multi-Agent Trading Dashboard</span></h1>
+    </div>
+    <div class="spacer"></div>
+    <span class="learned-tag" id="learnedTag" style="display:none">🧠 learned config active</span>
+    <div class="toggle"><span class="dot" id="liveDot"></span> <span id="liveTxt">auto-refresh off</span></div>
+    <select id="symbol">
+      {% for s in symbols %}<option value="{{s}}">{{s}}</option>{% endfor %}
+    </select>
+    <select id="interval" title="auto-refresh interval">
+      <option value="0">Manual</option><option value="15">15s</option>
+      <option value="30">30s</option><option value="60">60s</option>
+    </select>
+    <button class="primary" id="refresh">↻ Refresh</button>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="live">● Live Signals</div>
+    <div class="tab" data-tab="backtest">▚ Backtest</div>
+    <div class="tab" data-tab="learn">🧠 Learn</div>
+    <div class="tab" data-tab="news">◆ News</div>
+  </div>
+
+  <div id="err" class="err" style="display:none"></div>
+
+  <!-- ================= LIVE ================= -->
+  <div class="page active" id="page-live">
+    <div class="grid-top" id="content">
+      <div class="card">
+        <div class="label">Master Decision</div>
+        <div class="decision" id="decision">—</div>
+        <div class="subline" id="decisionSub">waiting for data…</div>
+      </div>
+      <div class="card">
+        <div class="label" id="priceLabel">Price</div>
+        <div class="price" id="price">—</div>
+        <svg class="spark" id="spark" viewBox="0 0 300 52" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="card">
+        <div class="label">Consensus</div>
+        <div class="gauge-wrap">
+          <div class="gauge">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="40" stroke="#232c3b" stroke-width="9" fill="none"/>
+              <circle id="gaugeArc" cx="48" cy="48" r="40" stroke="#4f8cff" stroke-width="9"
+                fill="none" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251"
+                transform="rotate(-90 48 48)"/>
+            </svg>
+            <div class="val" id="consensusVal">0%</div>
+          </div>
+          <div class="meta-list">
+            <div>avg confidence <b id="avgConf">—</b></div>
+            <div>direction <b id="direction">—</b></div>
+            <div>updated <b id="ts">—</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="risk ok" id="risk">
+      <span class="badge" id="riskBadge">—</span>
+      <span id="riskReason">Risk Manager status</span>
+    </div>
+    <div class="agents" id="agents"></div>
+  </div>
+
+  <!-- ================= BACKTEST ================= -->
+  <div class="page" id="page-backtest">
+    <div class="controls">
+      <div class="fld"><small>From</small><input type="date" id="btFrom"></div>
+      <div class="fld"><small>To</small><input type="date" id="btTo"></div>
+      <div class="fld"><small>Timeframe</small>
+        <div class="seg" id="tfSeg">
+          <button data-tf="1h" class="on">1H</button>
+          <button data-tf="15m">15M</button>
+        </div>
+      </div>
+      <div class="fld"><small>Config</small>
+        <div class="seg" id="cfgSeg">
+          <button data-cfg="learned" class="on">🧠 Learned</button>
+          <button data-cfg="default">Default</button>
+        </div>
+      </div>
+      <div class="fld"><small>&nbsp;</small><button class="primary" id="runBt">▶ Run Backtest</button></div>
+      <div class="fld"><small>&nbsp;</small><span id="btRange" style="font-size:12px;color:var(--muted)"></span></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="label">Trades</div><div class="v" id="btTrades">—</div></div>
+      <div class="stat"><div class="label">Win Rate</div><div class="v" id="btWin">—</div></div>
+      <div class="stat"><div class="label">Net Pips</div><div class="v" id="btPips">—</div></div>
+      <div class="stat"><div class="label">Candles</div><div class="v" id="btCandles">—</div></div>
+    </div>
+    <div class="card eq-card">
+      <div class="label">Equity Curve (cumulative pips)</div>
+      <svg id="equity" viewBox="0 0 900 220" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="card">
+      <div class="label">Trade Log</div>
+      <div id="btLog"><div class="center">Pick a date range and hit <b>Run Backtest</b>. Full range ≈ few seconds.</div></div>
+    </div>
+  </div>
+
+  <!-- ================= LEARN ================= -->
+  <div class="page" id="page-learn">
+    <div class="controls">
+      <div class="fld"><small>Symbol</small><span id="lnSym" style="font-weight:600;padding:9px 0">—</span></div>
+      <div class="fld"><small>Search iterations</small>
+        <select id="lnIters"><option value="400">400 (fast)</option>
+          <option value="700" selected>700 (balanced)</option>
+          <option value="1200">1200 (thorough)</option></select></div>
+      <div class="fld"><small>&nbsp;</small><button class="grape" id="runLearn">🧠 Train + Optimize on 2y</button></div>
+    </div>
+    <div class="card" id="lnStatusCard" style="display:none">
+      <div class="label" id="lnMsg">starting…</div>
+      <div class="prog-wrap"><div class="prog" id="lnProg"></div></div>
+      <div style="font-size:12px;color:var(--muted)">This runs once over ~2 years of real hourly data: trains the ML model, scores every agent on each candle, then searches thousands of weight/threshold combos. ~1–3 min.</div>
+    </div>
+    <div id="lnResult" style="display:none">
+      <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat"><div class="label">ML test accuracy</div><div class="v" id="lnMlAcc">—</div>
+          <div class="kv" id="lnMlBase"></div></div>
+        <div class="stat"><div class="label">Data</div><div class="v" id="lnCandles">—</div>
+          <div class="kv" id="lnRange"></div></div>
+        <div class="stat"><div class="label">Config</div><div class="v" style="font-size:20px;color:var(--purple)">saved ✓</div>
+          <div class="kv">written to config.json · live bot now uses it</div></div>
+      </div>
+      <div class="card">
+        <div class="label">Out-of-sample result (last 30% — never seen during tuning)</div>
+        <div class="cmp">
+          <div class="box" id="cmpBase"><h4>Default (before)</h4><div class="big">—</div><div class="kv"></div></div>
+          <div class="box" id="cmpTuned"><h4>Tuned (after)</h4><div class="big">—</div><div class="kv"></div></div>
+          <div class="box" id="cmpTrain"><h4>Tuned on train</h4><div class="big">—</div><div class="kv"></div></div>
+        </div>
+        <div class="foot-note" style="text-align:left">The <b>Tuned (after)</b> box is the honest number — measured on data the optimizer never touched. If it's much worse than "Tuned on train", that's overfitting.</div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="label">Learned agent weights</div>
+        <div class="wgrid" id="lnWeights"></div>
+        <div class="kv" id="lnThresh" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div id="lnIdle" class="card"><div class="center">Hit <b>Train + Optimize</b> to let the agents learn from the last 2 years of real data.</div></div>
+  </div>
+
+  <!-- ================= NEWS ================= -->
+  <div class="page" id="page-news">
+    <div class="news-head">
+      <div class="label" style="margin:0">Market tone</div>
+      <span class="tone-pill neutral" id="newsTone">—</span>
+      <span style="color:var(--muted);font-size:13px" id="newsCount"></span>
+    </div>
+    <div id="newsList"><div class="center">Loading headlines…</div></div>
+    <div class="foot-note" style="margin-top:14px;text-align:left">
+      Live Yahoo Finance RSS · tone = naive keyword sentiment (display only, does not affect voting).
+    </div>
+  </div>
+
+  <div class="foot-note">Paper simulation · no real orders · data via Yahoo Finance (synthetic fallback)</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let timer=null, currentTab="live", cfgChoice="learned", btInterval="1h", learnPoll=null, rangeLoaded={};
+
+function sigClass(s){ return s==="BUY"?"buy":s==="SELL"?"sell":"hold"; }
+function barColor(s){ return s==="BUY"?"var(--buy)":s==="SELL"?"var(--sell)":"var(--hold)"; }
+function showErr(m){ $("err").style.display="block"; $("err").textContent="Error: "+m; }
+function clearErr(){ $("err").style.display="none"; }
+function pips(v){ return (v>=0?"+":"")+v; }
+
+document.querySelectorAll(".tab").forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active"); $("page-"+t.dataset.tab).classList.add("active");
+    currentTab=t.dataset.tab;
+    if(currentTab==="news") loadNews();
+    if(currentTab==="backtest") loadRange();
+    if(currentTab==="learn"){ $("lnSym").textContent=$("symbol").value; loadLastReport(); }
+  };
+});
+
+/* ---------- LIVE ---------- */
+function drawSpark(vals){
+  const svg=$("spark"); svg.innerHTML="";
+  if(!vals||vals.length<2) return;
+  const min=Math.min(...vals),max=Math.max(...vals),rng=(max-min)||1;
+  const W=300,H=52,step=W/(vals.length-1);
+  const pts=vals.map((v,i)=>[i*step,H-4-((v-min)/rng)*(H-8)]);
+  const d=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const up=vals[vals.length-1]>=vals[0], col=up?"var(--buy)":"var(--sell)";
+  svg.innerHTML=`<path d="${d} L${W} ${H} L0 ${H} Z" fill="${col}" opacity="0.10"/>`+
+    `<path d="${d}" fill="none" stroke="${col}" stroke-width="2"/>`;
+}
+function setGauge(pct){
+  const C=251,arc=$("gaugeArc");
+  arc.style.strokeDashoffset=C-(pct/100)*C;
+  arc.setAttribute("stroke",pct>=70?"var(--buy)":pct>=60?"var(--hold)":"#4f8cff");
+  $("consensusVal").textContent=pct+"%";
+}
+async function loadLive(){
+  const sym=$("symbol").value;
+  $("content").classList.add("loading"); $("agents").classList.add("loading");
+  try{
+    const d=await(await fetch(`/api/decision?symbol=${encodeURIComponent(sym)}`)).json();
+    if(d.error) throw new Error(d.error);
+    clearErr(); renderLive(d);
+  }catch(e){ showErr(e.message); }
+  finally{ $("content").classList.remove("loading"); $("agents").classList.remove("loading"); }
+}
+function renderLive(d){
+  const dec=d.decision.toLowerCase(),el=$("decision");
+  el.textContent=d.decision; el.className="decision "+dec;
+  const pretty={BUY:"Strong consensus to buy",SELL:"Strong consensus to sell",
+    HOLD:"No trade — not enough agreement",BLOCK:"Blocked by Risk Manager",
+    HALF_BUY:"Half position — moderate buy",HALF_SELL:"Half position — moderate sell"};
+  $("decisionSub").innerHTML=(pretty[d.decision]||"")+` · consensus <b>${Math.round(d.consensus*100)}%</b>`;
+  $("priceLabel").textContent=d.symbol+" price";
+  $("price").textContent=d.price; drawSpark(d.spark);
+  setGauge(Math.round(d.consensus*100));
+  $("avgConf").textContent=d.avg_conf+"%"; $("direction").textContent=d.direction;
+  $("ts").textContent=d.ts.split(" ")[1];
+  const risk=$("risk"),ok=d.risk.signal!=="BLOCK";
+  risk.className="risk "+(ok?"ok":"block");
+  $("riskBadge").textContent=ok?"RISK OK":"BLOCK";
+  $("riskReason").textContent="Risk Manager — "+d.risk.reason;
+  $("agents").innerHTML=d.votes.map(v=>`
+    <div class="agent">
+      <div class="top"><span class="name">${v.agent}</span>
+        <span class="sig ${sigClass(v.signal)}">${v.signal}</span></div>
+      <div class="reason">${v.reason}</div>
+      <div class="bar"><i style="width:${v.confidence}%;background:${barColor(v.signal)}"></i></div>
+      <div class="foot"><span>${v.confidence}% confidence</span>
+        <span class="wtag">weight ×${v.weight}</span></div>
+    </div>`).join("");
+}
+
+/* ---------- BACKTEST ---------- */
+async function loadRange(){
+  const sym=$("symbol").value;
+  try{
+    const r=await(await fetch(`/api/range?symbol=${encodeURIComponent(sym)}&interval=${btInterval}`)).json();
+    if(r.error) return;
+    $("btFrom").min=r.start; $("btFrom").max=r.end;
+    $("btTo").min=r.start; $("btTo").max=r.end;
+    $("btRange").textContent=`available: ${r.start} → ${r.end} (${r.candles} candles) · full 2y run is slow, pick a shorter window for speed`;
+    const rk=sym+"|"+btInterval;
+    if(!rangeLoaded[rk]){
+      // default: last ~90 days on 1H, last 7 days on 15M (fast first run)
+      const back = btInterval==="15m" ? 7 : 90;
+      const end=new Date(r.end), from=new Date(end); from.setDate(from.getDate()-back);
+      const min=new Date(r.start);
+      $("btFrom").value=(from<min?min:from).toISOString().slice(0,10);
+      $("btTo").value=r.end; rangeLoaded[rk]=true;
+    }
+  }catch(e){}
+}
+document.querySelectorAll("#cfgSeg button").forEach(b=>{
+  b.onclick=()=>{ document.querySelectorAll("#cfgSeg button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); cfgChoice=b.dataset.cfg; };
+});
+document.querySelectorAll("#tfSeg button").forEach(b=>{
+  b.onclick=()=>{ document.querySelectorAll("#tfSeg button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); btInterval=b.dataset.tf; loadRange(); };
+});
+function drawEquity(eq){
+  const svg=$("equity"); svg.innerHTML="";
+  if(!eq||!eq.length){ svg.innerHTML=`<text x="450" y="110" fill="#8b98a9" text-anchor="middle">no trades</text>`; return; }
+  const data=[0,...eq], W=900,H=220,pad=10;
+  const min=Math.min(...data),max=Math.max(...data),rng=(max-min)||1;
+  const step=(W-2*pad)/(data.length-1||1), y=v=>H-pad-((v-min)/rng)*(H-2*pad);
+  const pts=data.map((v,i)=>[pad+i*step,y(v)]);
+  const d=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const end=eq[eq.length-1], col=end>=0?"var(--buy)":"var(--sell)", zero=y(0);
+  svg.innerHTML=`<line x1="0" y1="${zero}" x2="${W}" y2="${zero}" stroke="#2b3648" stroke-dasharray="4 4"/>`+
+    `<path d="${d} L${pts[pts.length-1][0]} ${zero} L${pad} ${zero} Z" fill="${col}" opacity="0.08"/>`+
+    `<path d="${d}" fill="none" stroke="${col}" stroke-width="2"/>`;
+}
+async function loadBacktest(){
+  const sym=$("symbol").value, f=$("btFrom").value, t=$("btTo").value;
+  $("btLog").innerHTML=`<div class="center"><span class="spin"></span> Running walk-forward backtest…</div>`;
+  ["btTrades","btWin","btPips","btCandles"].forEach(i=>$(i).textContent="…");
+  try{
+    const url=`/api/backtest?symbol=${encodeURIComponent(sym)}&start=${f}&end=${t}&config=${cfgChoice}&interval=${btInterval}&fresh=1`;
+    const r=await(await fetch(url)).json();
+    if(r.error) throw new Error(r.error);
+    clearErr(); renderBacktest(r);
+  }catch(e){ showErr(e.message); $("btLog").innerHTML=`<div class="center">failed</div>`; }
+}
+function renderBacktest(r){
+  $("btTrades").textContent=r.trades;
+  $("btWin").textContent=r.win_rate+"%";
+  const p=$("btPips"); p.textContent=pips(r.net_pips); p.className="v "+(r.net_pips>=0?"pos":"neg");
+  $("btCandles").textContent=r.candles;
+  $("btRange").textContent=`tested: ${r.from} → ${r.to}`;
+  drawEquity(r.equity);
+  if(!r.log.length){ $("btLog").innerHTML=`<div class="center">No trades triggered in this range.</div>`; return; }
+  const rows=r.log.slice(-30).reverse().map(t=>`
+    <tr><td>${t.ts}</td><td class="${t.dir.toLowerCase()}">${t.dir}</td>
+    <td>${t.entry}</td><td>${t.exit}</td>
+    <td class="${t.pnl>=0?'pos':'neg'}">${pips(t.pnl)}p</td><td>${t.consensus}</td></tr>`).join("");
+  $("btLog").innerHTML=`<table><thead><tr><th>Time</th><th>Dir</th><th>Entry</th><th>Exit</th>
+    <th>P&L</th><th>Consensus</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="foot-note" style="text-align:left;margin-top:10px">showing last ${Math.min(30,r.log.length)} of ${r.log.length} trades</div>`;
+}
+
+/* ---------- LEARN ---------- */
+async function loadLastReport(){
+  if($("lnResult").style.display==="block") return;   // already showing one
+  try{
+    const d=await(await fetch("/api/learn/last")).json();
+    if(d.report){ renderLearn(d.report); }
+  }catch(e){}
+}
+async function startLearn(){
+  const sym=$("symbol").value, iters=$("lnIters").value;
+  $("runLearn").disabled=true;
+  $("lnIdle").style.display="none"; $("lnResult").style.display="none";
+  $("lnStatusCard").style.display="block";
+  try{ await fetch(`/api/learn/start?symbol=${encodeURIComponent(sym)}&iters=${iters}`,{method:"POST"}); }
+  catch(e){ showErr(e.message); }
+  if(learnPoll) clearInterval(learnPoll);
+  learnPoll=setInterval(pollLearn, 900); pollLearn();
+}
+async function pollLearn(){
+  try{
+    const s=await(await fetch("/api/learn/status")).json();
+    $("lnMsg").textContent=s.msg;
+    $("lnProg").style.width=Math.round((s.frac||0)*100)+"%";
+    if(!s.running){
+      clearInterval(learnPoll); learnPoll=null; $("runLearn").disabled=false;
+      if(s.error){ showErr(s.error); $("lnStatusCard").style.display="none"; $("lnIdle").style.display="block"; }
+      else if(s.report){ renderLearn(s.report); }
+    }
+  }catch(e){}
+}
+function renderLearn(rep){
+  $("lnStatusCard").style.display="none"; $("lnResult").style.display="block";
+  const ml=rep.ml, o=rep.opt;
+  $("lnMlAcc").textContent=(ml.test_acc*100).toFixed(1)+"%";
+  $("lnMlBase").innerHTML=`baseline <b>${(ml.baseline*100).toFixed(1)}%</b> · edge <b>${(ml.edge*100>=0?'+':'')}${(ml.edge*100).toFixed(1)}%</b> · horizon ${ml.horizon}h`;
+  $("lnCandles").textContent=rep.candles;
+  $("lnRange").innerHTML=`${rep.range[0]} → ${rep.range[1]}`;
+  const box=(id,label,d,winner)=>{
+    const el=$(id); el.querySelector(".big").textContent=pips(d.net_pips)+"p";
+    el.querySelector(".big").style.color=d.net_pips>=0?"var(--buy)":"var(--sell)";
+    el.querySelector(".kv").innerHTML=`${d.trades} trades · ${d.win_rate}% win`;
+    el.classList.toggle("win",winner);
+  };
+  const better=o.tuned_test.net_pips>o.baseline_test.net_pips;
+  box("cmpBase","",o.baseline_test,!better);
+  box("cmpTuned","",o.tuned_test,better);
+  box("cmpTrain","",o.tuned_train,false);
+  const w=o.best.weights;
+  $("lnWeights").innerHTML=Object.keys(w).filter(k=>w[k]>0)
+    .sort((a,b)=>w[b]-w[a])
+    .map(k=>`<div class="wpill"><span>${k}</span><b>×${w[k]}</b></div>`).join("")
+    || `<div class="kv">all weights zero</div>`;
+  $("lnThresh").innerHTML=`consensus full <b>${(o.best.thr_full*100).toFixed(0)}%</b> · half <b>${(o.best.thr_half*100).toFixed(0)}%</b> · min conviction <b>${o.best.min_conviction}</b> · SL <b>${o.best.sl}</b> · TP <b>${o.best.tp}</b> pips`;
+  checkLearned();
+}
+
+/* ---------- NEWS ---------- */
+async function loadNews(){
+  const sym=$("symbol").value;
+  $("newsList").innerHTML=`<div class="center"><span class="spin"></span> Loading headlines…</div>`;
+  try{
+    const r=await(await fetch(`/api/news?symbol=${encodeURIComponent(sym)}`)).json();
+    if(r.error) throw new Error(r.error);
+    clearErr(); renderNews(r);
+  }catch(e){ showErr(e.message); $("newsList").innerHTML=`<div class="center">failed</div>`; }
+}
+function renderNews(r){
+  const tp=$("newsTone"); tp.className="tone-pill "+r.tone; tp.textContent=r.tone.toUpperCase();
+  $("newsCount").textContent=`${r.items.length} headlines · ${r.bull} bull / ${r.bear} bear / ${r.neutral} neutral`;
+  if(!r.items.length){ $("newsList").innerHTML=`<div class="center">No headlines.</div>`; return; }
+  $("newsList").innerHTML=r.items.map(it=>`
+    <a class="news-item" href="${it.link}" target="_blank" rel="noopener">
+      <div class="tk ${it.tone}"></div>
+      <div><div class="tt">${it.title}</div><div class="mt">${it.time} · ${it.tone}</div></div>
+    </a>`).join("");
+}
+
+/* ---------- learned config badge ---------- */
+async function checkLearned(){
+  try{
+    const d=await(await fetch("/api/decision?symbol="+encodeURIComponent($("symbol").value))).json();
+    const active = d.votes && d.votes.some(v=>v.agent==="Learned ML" && v.signal!=="HOLD");
+    $("learnedTag").style.display = active ? "inline-block" : $("learnedTag").style.display;
+  }catch(e){}
+}
+
+/* ---------- shared ---------- */
+function refreshCurrent(){
+  if(currentTab==="live") loadLive();
+  else if(currentTab==="news") loadNews();
+  else if(currentTab==="backtest") loadBacktest();
+}
+function setupAuto(){
+  if(timer){clearInterval(timer);timer=null;}
+  const sec=parseInt($("interval").value,10), on=sec>0;
+  $("liveDot").classList.toggle("on",on);
+  $("liveTxt").textContent=on?`auto-refresh every ${sec}s`:"auto-refresh off";
+  if(on) timer=setInterval(()=>{ if(currentTab==="live"||currentTab==="news") refreshCurrent(); }, sec*1000);
+}
+$("refresh").onclick=refreshCurrent;
+$("symbol").onchange=()=>{ loadLive(); rangeLoaded={};
+  if(currentTab==="news") loadNews(); if(currentTab==="backtest") loadRange();
+  $("lnSym").textContent=$("symbol").value; };
+$("interval").onchange=setupAuto;
+$("runBt").onclick=loadBacktest;
+$("runLearn").onclick=startLearn;
+loadLive();
+</script>
+</body>
+</html>

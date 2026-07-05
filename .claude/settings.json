@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Edit",
+      "Write",
+      "NotebookEdit",
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Bash(git *)",
+      "Bash(cd *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(echo *)",
+      "Bash(sleep *)",
+      "Bash(tasklist*)",
+      "Bash(curl -s \"http://127.0.0.1*)",
+      "Bash(curl -s http://127.0.0.1*)",
+      "Bash(curl http://127.0.0.1*)",
+      "Bash(curl -s \"http://localhost*)",
+      "Bash(curl -s http://localhost*)",
+      "Bash(curl http://localhost*)"
+    ]
+  }
+}

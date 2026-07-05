@@ -23,8 +23,9 @@ import master_brain as mb
 
 SYMBOL     = "EURUSD=X"
 PIP        = 0.0001
-SL_PIPS    = 15
-TP_PIPS    = 30
+_cfg       = mb.load_config("1h")          # trained champion config
+SL_PIPS    = _cfg.get("sl", 15)
+TP_PIPS    = _cfg.get("tp", 30)
 PRICE_SEC  = 10        # how often to check price for SL/TP (seconds)
 ANALYZE_MIN = 15       # re-run agents at most this often (minutes) for new entries
 LOGFILE    = "paper_trades.csv"

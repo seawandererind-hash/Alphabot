@@ -1,0 +1,96 @@
+- 02:37:28 === TRAINING SESSION START (6h budget) ===
+- 02:42:04 precomputed 1h: 17005 candles in 276s
+- 02:42:04 diag 1h default WITH 1p spread: 2102 trades, 33.9% win, -1266.0 pips
+- 02:42:04 diag 1h learned WITH 1p spread: 2041 trades, 40.2% win, +3229.0 pips
+- 02:43:21 precomputed 15m: 5347 candles in 77s
+- 02:43:21 diag 15m default WITH 1p spread: 160 trades, 28.7% win, -416.0 pips
+- 02:43:21 diag 15m learned WITH 1p spread: 692 trades, 47.8% win, -152.0 pips
+- 02:43:21 agent ranking (1h dir_acc): Learned ML 0.645, Stat Arbitrage 0.496, Session Timer 0.495, Trend Following 0.482, ML/Momentum 0.474, Correlation 0.474, Market Structure 0.471, AMD Detector 0.466
+- 02:44:25 ML tp-before-sl label: val edge +15.67 p/trade (746 sig), TEST edge +15.63 p/trade (646 sig), thr 0.6/0.3
+- 02:44:25 ML model ADOPTED (positive test edge) — vote caches refreshed
+- 02:48:23 opt1h chunk 1: best score 589.7 (win 49.1%) | 65%-club: YES score 554.7 | max profitable win rate so far 92.0%
+- 02:56:56 precomputed 1h: 17005 candles in 326s
+- 02:58:36 precomputed 15m: 5347 candles in 100s
+- 03:03:22 opt1h chunk 2: best score 986.5 (win 63.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 92.2%
+- 03:07:53 opt1h chunk 3: best score 986.5 (win 63.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 92.2%
+- 03:12:04 opt1h chunk 4: best score 986.5 (win 63.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 92.2%
+- 03:16:03 opt1h chunk 5: best score 986.5 (win 63.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 92.2%
+- 03:20:16 opt1h chunk 6: best score 986.5 (win 63.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 93.2%
+- 03:24:20 opt1h chunk 7: best score 986.5 (win 63.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 93.2%
+- 03:28:27 opt1h chunk 8: best score 1192.5 (win 41.1%) | 65%-club: YES score 587.2 | max profitable win rate so far 93.2%
+- 03:32:32 opt1h chunk 9: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.1%
+- 03:36:43 opt1h chunk 10: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.1%
+- 03:40:42 opt1h chunk 11: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.3%
+- 03:44:56 opt1h chunk 12: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.3%
+- 03:49:07 opt1h chunk 13: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.3%
+- 03:53:14 opt1h chunk 14: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.3%
+- 03:57:23 opt1h chunk 15: best score 1192.5 (win 41.1%) | 65%-club: YES score 663.8 | max profitable win rate so far 94.3%
+- 04:00:55 opt1h chunk 16: best score 1768.0 (win 52.8%) | 65%-club: YES score 999.1 | max profitable win rate so far 94.3%
+- 04:05:11 opt1h chunk 17: best score 1768.0 (win 52.8%) | 65%-club: YES score 999.1 | max profitable win rate so far 94.3%
+- 04:09:07 opt1h chunk 18: best score 1804.7 (win 50.8%) | 65%-club: YES score 1105.6 | max profitable win rate so far 94.3%
+- 04:13:15 opt1h chunk 19: best score 1804.7 (win 50.8%) | 65%-club: YES score 1105.6 | max profitable win rate so far 94.3%
+- 04:17:16 opt1h chunk 20: best score 1804.7 (win 50.8%) | 65%-club: YES score 1192.6 | max profitable win rate so far 94.3%
+- 04:21:14 opt1h chunk 21: best score 1804.7 (win 50.8%) | 65%-club: YES score 1192.6 | max profitable win rate so far 94.3%
+- 04:25:20 opt1h chunk 22: best score 1804.7 (win 50.8%) | 65%-club: YES score 1192.6 | max profitable win rate so far 94.3%
+- 04:29:25 opt1h chunk 23: best score 1827.0 (win 49.4%) | 65%-club: YES score 1192.6 | max profitable win rate so far 94.3%
+- 04:33:28 opt1h chunk 24: best score 1827.0 (win 49.4%) | 65%-club: YES score 1192.6 | max profitable win rate so far 94.3%
+- 04:37:38 opt1h chunk 25: best score 1827.0 (win 49.4%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 04:41:50 opt1h chunk 26: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 04:46:07 opt1h chunk 27: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 04:50:14 opt1h chunk 28: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 04:54:24 opt1h chunk 29: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 04:58:44 opt1h chunk 30: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:03:06 opt1h chunk 31: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:07:24 opt1h chunk 32: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:11:33 opt1h chunk 33: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:15:33 opt1h chunk 34: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:19:53 opt1h chunk 35: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:24:05 opt1h chunk 36: best score 1847.7 (win 50.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:28:38 opt1h chunk 37: best score 1905.8 (win 49.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 05:33:08 opt1h chunk 38: best score 1905.8 (win 49.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 06:59:41 opt1h chunk 39: best score 1905.8 (win 49.3%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 07:01:38 opt1h chunk 40: best score 1922.9 (win 49.5%) | 65%-club: YES score 1202.9 | max profitable win rate so far 94.3%
+- 07:09:29 opt15m chunk 1: best score 183.2 (win 76.4%) | 65%-club: YES score 183.2 | max profitable win rate so far 94.7%
+- 07:11:47 opt15m chunk 2: best score 183.2 (win 76.4%) | 65%-club: YES score 183.2 | max profitable win rate so far 94.7%
+- 07:13:01 opt15m chunk 3: best score 192.9 (win 77.5%) | 65%-club: YES score 192.9 | max profitable win rate so far 94.7%
+- 07:14:06 opt15m chunk 4: best score 192.9 (win 77.5%) | 65%-club: YES score 192.9 | max profitable win rate so far 94.7%
+- 07:16:18 opt15m chunk 5: best score 192.9 (win 77.5%) | 65%-club: YES score 192.9 | max profitable win rate so far 94.7%
+- 07:17:28 opt15m chunk 6: best score 192.9 (win 77.5%) | 65%-club: YES score 192.9 | max profitable win rate so far 94.7%
+- 07:19:35 opt15m chunk 7: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 94.7%
+- 07:20:47 opt15m chunk 8: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 94.7%
+- 07:22:45 opt15m chunk 9: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 94.7%
+- 07:24:13 opt15m chunk 10: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:25:45 opt15m chunk 11: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:27:18 opt15m chunk 12: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:28:44 opt15m chunk 13: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:30:17 opt15m chunk 14: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:31:49 opt15m chunk 15: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:33:23 opt15m chunk 16: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:34:56 opt15m chunk 17: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:36:28 opt15m chunk 18: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:38:02 opt15m chunk 19: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:39:39 opt15m chunk 20: best score 197.7 (win 77.5%) | 65%-club: YES score 197.7 | max profitable win rate so far 97.8%
+- 07:41:08 opt15m chunk 21: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:42:41 opt15m chunk 22: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:44:13 opt15m chunk 23: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:45:47 opt15m chunk 24: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:47:16 opt15m chunk 25: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:48:49 opt15m chunk 26: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:50:27 opt15m chunk 27: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.8%
+- 07:51:59 opt15m chunk 28: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 07:53:29 opt15m chunk 29: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 07:55:05 opt15m chunk 30: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 07:56:41 opt15m chunk 31: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 07:58:10 opt15m chunk 32: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 07:59:44 opt15m chunk 33: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 08:01:16 opt15m chunk 34: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 08:02:52 opt15m chunk 35: best score 207.3 (win 77.5%) | 65%-club: YES score 207.3 | max profitable win rate so far 97.9%
+- 08:04:00 HOLDOUT 1h current config: -537.0p (323 trades, 31.9% win)
+- 08:04:00 HOLDOUT 1h best: -33.5p (197 trades, 40.1% win)
+- 08:04:00 HOLDOUT 1h best65: +94.5p (190 trades, 73.7% win)
+- 08:04:00 config_1h UPDATED with 'best65' champion (holdout +94.5p, 73.7% win)
+- 08:04:00 HOLDOUT 15m current config: -16.0p (127 trades, 48.0% win)
+- 08:04:00 HOLDOUT 15m best: -32.0p (18 trades, 55.6% win)
+- 08:04:00 HOLDOUT 15m best65: -32.0p (18 trades, 55.6% win)
+- 08:04:00 15m: no champion beat current config on holdout — config kept
+- 08:04:00 === TRAINING SESSION COMPLETE — models/train_summary.json written ===
